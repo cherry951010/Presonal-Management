@@ -1,0 +1,15 @@
+ //зЂВс.
+        public static bool InsertRecord(PMModel.Admin dimp)
+        {
+            return PMDAL.AdminDAL.InsertRecord(dimp);
+        }
+
+        public static bool UpdateRecordMiling(PMModel.miling ming,string str)
+        {
+            return PMDAL.AdminDAL.UpdateRecordMiling(ming,str);
+        }
+
+        public static List<PMModel.miling> SelectSingleRecordMiling(PMModel.miling str)
+        {
+            return PMDAL.AdminDAL.SelectSingleRecordMiling(str);
+        }

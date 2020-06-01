@@ -1,0 +1,82 @@
+//时间戳转换.
+            System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)); // 当地时区
+            //不为空判断.
+            if (textBox1.Text.Trim() == "")
+            {
+                MessageBox.Show("员工号不能为空！！！", "信息提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+            }
+            else if (textBox2.Text.Trim() == "")
+            {
+                MessageBox.Show("登录名不能为空！！！", "信息提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+            }
+            else if (textBox3.Text.Trim() == "")
+            {
+                MessageBox.Show("密码不能为空！！！", "信息提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+            }
+            else if (textBox4.Text.Trim() == "")
+            {
+                MessageBox.Show("确认密码不能为空！！！", "信息提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+            }
+            else if (textBox5.Text.Trim() =="")
+            {
+                MessageBox.Show("密令不能为空！！！", "信息提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+            }
+
+            else
+            {
+                //两次密码是否相等.
+                if (textBox3.Text.Trim() != textBox4.Text.Trim())
+                {
+                    MessageBox.Show("两次密码不一致！！！", "信息提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+                }
+                else
+                {
+                    adm.AUserName = textBox2.Text.Trim();
+                    adm.AUserPass = textBox3.Text.Trim();
+                    ming.T_Order = textBox5.Text.Trim();
+                    //判断是否有此员工.
+                    if (PMBLL.T_StaffBLL.SelectSingleRecord1(textBox1.Text.Trim()).Count > 0)
+                    {
+                        //判断密令是否存在.
+                        if (PMBLL.AdminBLL.SelectSingleRecordMiling(ming).Count > 0)
+                        {
+                            //根据输入的密令进行查找对象的密令信息.
+                            List<PMModel.miling> min = PMBLL.AdminBLL.SelectSingleRecordMiling(ming);
+                            if (min[0].T_States == 2)
+                            {
+                                MessageBox.Show("密令已被使用！！！", "信息提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+                            }
+                            //判断密令是否在有效期内.
+                            else if (((long)(DateTime.Now - startTime).TotalSeconds) - ((long)(min[0].T_time - startTime).TotalSeconds) > 3600)
+                            {
+                                MessageBox.Show("密令已超时！！！", "信息提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+                            }
+                            else
+                            {
+                                //判断是否注册成功.
+                                if (PMBLL.AdminBLL.InsertRecord(adm))
+                                {
+                                    //如果注册成功,更改秘钥的状态.
+                                    ming.T_States = 2;
+                                    PMBLL.AdminBLL.UpdateRecordMiling(ming, textBox5.Text.Trim());
+                                    MessageBox.Show("注册成功！！！", "信息提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button2);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("注册失败！！！！", "信息提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            MessageBox.Show("密令不存在！！！", "信息提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+                        }
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("此员工不存在！！！", "信息提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+                    }
+                }
+            }

@@ -1,0 +1,57 @@
+/// <summary>
+        /// 添加记录
+        /// </summary>
+        /// <param name="users">model写的类对象</param>
+        /// <returns></returns>
+        public static bool InsertRecord(PMModel.Admin dimq)
+        {
+            string strSQL = "insert into T_Admins values (@AUserName,@AUserPass)";
+
+            //数组接受数据.
+            SqlParameter[] sqlPar = {
+                new SqlParameter("@AUserName",dimq.AUserName),
+                new SqlParameter("@AUserPass",dimq.AUserPass)
+            };
+            bool result = MmsqlHelper.ModifMethod(strSQL, sqlPar);
+            return result;
+        }
+
+        //miling.
+        public static bool UpdateRecordMiling(PMModel.miling ming,string miling)
+        {
+            string strSQL = "update miling set T_States=@T_States where T_Order='" + miling + "'";
+            SqlParameter[] sqlPar = {
+                new SqlParameter("@T_States",ming.T_States)
+            };
+
+            bool result = MmsqlHelper.ModifMethod(strSQL, sqlPar);
+            return result;
+        }
+
+        /// <summary>
+        /// miling.
+        /// </summary>
+        /// <param name="str">请求传来的参数</param>
+        /// <returns></returns>
+        public static List<PMModel.miling> SelectSingleRecordMiling(PMModel.miling miling)
+        {
+            List<PMModel.miling> list = new List<PMModel.miling>();
+            //编写数据查询语句.
+            string strSql = "select * from miling where T_Order =@T_Order";
+            SqlParameter[] sqlPar = {
+                new SqlParameter("@T_Order",miling.T_Order)
+            };
+
+            DataSet sqlDs = MmsqlHelper.SearchMethod(strSql, sqlPar);
+            //遍历数据.
+            foreach (DataRow dr in sqlDs.Tables[0].Rows)
+            {
+                //引用数据类型接受并转译.
+                PMModel.miling miling1 = new PMModel.miling();
+                miling1.T_Order = Convert.ToString(dr["T_Order"]);
+                miling1.T_States = int.Parse((dr["T_States"].ToString()));
+                miling1.T_time = DateTime.Parse(dr["T_time"].ToString());
+                list.Add(miling1);
+            }
+            return list;
+        }
